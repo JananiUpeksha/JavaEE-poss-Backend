@@ -1,0 +1,12 @@
+CREATE TABLE customer (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    address VARCHAR(255),
+    contact VARCHAR(15)
+);
+CREATE TABLE item (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    price DECIMAL(10, 2) NOT NULL,
+    qty INT NOT NULL
+);
