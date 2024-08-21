@@ -23,4 +23,18 @@ public class CustomerBOImpl implements CustomerBO {
             throw new RuntimeException("Failed to save customer", e);
         }
     }
+
+    @Override
+    public boolean updateCustomer(String id, CustomerDTO customerDTO, Connection connection) {
+        try {
+            return customerDAO.updateCustomer(id, customerDTO, connection);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update customer", e);
+        }
+    }
+
+    @Override
+    public boolean deleteCustomer(String customerId, Connection connection) throws SQLException {
+        return customerDAO.deleteCustomer(customerId, connection);
+    }
 }

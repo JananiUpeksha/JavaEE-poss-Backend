@@ -63,4 +63,56 @@ public class CustomerController extends HttpServlet {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!req.getContentType().toLowerCase().contains("application/json")) {
+            resp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+            return;
+        }
+
+        String customerID = req.getParameter("id");
+        if (customerID == null || customerID.isEmpty()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing customer ID");
+            return;
+        }
+
+        try (var writer = resp.getWriter()) {
+            Jsonb jsonb = JsonbBuilder.create();
+            CustomerDTO updatedCustomer = jsonb.fromJson(req.getReader(), CustomerDTO.class);
+            updatedCustomer.setId(customerID);
+
+            if (customerBOImpl.updateCustomer(customerID, updatedCustomer, connection)) {
+                writer.write("Customer updated successfully");
+                resp.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                writer.write("Update failed");
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            }
+        } catch (JsonException e) {
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String customerId = req.getParameter("id");
+        if (customerId == null || customerId.isEmpty()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Customer ID is required.");
+            return;
+        }
+
+        try (var writer = resp.getWriter()) {
+            if (customerBOImpl.deleteCustomer(customerId, connection)) {
+                resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            } else {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Delete Failed");
+            }
+        } catch (SQLException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred while deleting the customer.");
+            throw new RuntimeException(e);
+        }
+    }
+
 }

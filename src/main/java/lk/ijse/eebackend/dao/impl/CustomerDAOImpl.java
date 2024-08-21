@@ -19,4 +19,24 @@ public class CustomerDAOImpl implements CustomerDAO {
             return pst.executeUpdate() > 0;
         }
     }
+
+    @Override
+    public boolean updateCustomer(String id, CustomerDTO customerDTO, Connection connection) throws SQLException {
+        try (PreparedStatement ps = connection.prepareStatement("UPDATE customer SET name = ?, address = ?, contact = ? WHERE id = ?")) {
+            ps.setString(1, customerDTO.getName());
+            ps.setString(2, customerDTO.getAddress());
+            ps.setString(3, customerDTO.getContact());
+            ps.setString(4, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    @Override
+    public boolean deleteCustomer(String customerId, Connection connection) throws SQLException {
+        try (PreparedStatement ps = connection.prepareStatement("DELETE FROM customer WHERE id = ?")) {
+            ps.setString(1, customerId);
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
 }
