@@ -17,6 +17,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet(urlPatterns = "/customer", loadOnStartup = 2)
 public class CustomerController extends HttpServlet {
@@ -95,6 +96,7 @@ public class CustomerController extends HttpServlet {
         }
     }
 
+
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String customerId = req.getParameter("id");
@@ -114,5 +116,106 @@ public class CustomerController extends HttpServlet {
             throw new RuntimeException(e);
         }
     }
+
+    /*@Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String customerId = req.getParameter("id");
+
+        if (customerId == null || customerId.isEmpty()) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Customer ID is required.");
+            return;
+        }
+
+        try (var writer = resp.getWriter()) {
+            CustomerDTO customer = customerBOImpl.getCustomerById(customerId, connection);
+
+            if (customer != null) {
+                resp.setContentType("application/json");
+                Jsonb jsonb = JsonbBuilder.create();
+                jsonb.toJson(customer, writer);
+                System.out.println("Customer data retrieved: " + customer);
+            } else {
+                resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Customer not found");
+            }
+        } catch (SQLException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error occurred");
+            e.printStackTrace();
+        } catch (JsonException e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing request");
+            e.printStackTrace();
+        }
+    }*/
+
+   /* @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String customerId = req.getParameter("id");
+
+        if (customerId != null && !customerId.isEmpty()) {
+            try (var writer = resp.getWriter()) {
+                CustomerDTO customer = customerBOImpl.getCustomerById(customerId, connection);
+
+                if (customer != null) {
+                    resp.setContentType("application/json");
+                    Jsonb jsonb = JsonbBuilder.create();
+                    jsonb.toJson(customer, writer);
+                    System.out.println("Customer data retrieved: " + customer);
+                } else {
+                    resp.sendError(HttpServletResponse.SC_NOT_FOUND, "Customer not found");
+                }
+            } catch (SQLException e) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error occurred");
+                e.printStackTrace();
+            } catch (JsonException e) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing request");
+                e.printStackTrace();
+            }
+        } else {
+            // Handle retrieving all customers
+            try (var writer = resp.getWriter()) {
+                List<CustomerDTO> customers = customerBOImpl.getAllCustomers(connection);
+
+                if (!customers.isEmpty()) {
+                    resp.setContentType("application/json");
+                    Jsonb jsonb = JsonbBuilder.create();
+                    jsonb.toJson(customers, writer);
+                    System.out.println("All customers data retrieved: " + customers);
+                } else {
+                    resp.setStatus(HttpServletResponse.SC_NO_CONTENT); // No content
+                }
+            } catch (SQLException e) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error occurred");
+                e.printStackTrace();
+            } catch (JsonException e) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing request");
+                e.printStackTrace();
+            }
+        }
+    }*/
+   @Override
+   protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+       try (var writer = resp.getWriter()) {
+           // Retrieve all customers
+           List<CustomerDTO> customers = customerBOImpl.getAllCustomers(connection);
+
+           // Check if any customers were retrieved
+           if (customers != null && !customers.isEmpty()) {
+               resp.setContentType("application/json");
+               Jsonb jsonb = JsonbBuilder.create();
+               // Convert the list of customers to JSON
+               jsonb.toJson(customers, writer);
+               System.out.println("Customer data retrieved: " + customers);
+           } else {
+               // Send a 404 if no customers found
+               resp.sendError(HttpServletResponse.SC_NOT_FOUND, "No customers found");
+           }
+       } catch (SQLException e) {
+           resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Database error occurred");
+           e.printStackTrace();
+       } catch (JsonException e) {
+           resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing request");
+           e.printStackTrace();
+       }
+   }
+
 
 }

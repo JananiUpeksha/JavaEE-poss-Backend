@@ -7,6 +7,7 @@ import lk.ijse.eebackend.dto.CustomerDTO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 public class CustomerBOImpl implements CustomerBO {
     private final CustomerDAO customerDAO;
@@ -37,4 +38,24 @@ public class CustomerBOImpl implements CustomerBO {
     public boolean deleteCustomer(String customerId, Connection connection) throws SQLException {
         return customerDAO.deleteCustomer(customerId, connection);
     }
+
+    /*@Override
+    public CustomerDTO getCustomerById(String customerId, Connection connection) throws SQLException {
+        return customerDAO.getCustomerById(customerId, connection);
+    }*/
+
+  /*  @Override
+    public CustomerDTO getCustomerById(String id, Connection connection) throws SQLException {
+        return customerDAO.getCustomerById(id, connection);
+    }
+
+    @Override
+    public List<CustomerDTO> getAllCustomers(Connection connection) throws SQLException {
+        return customerDAO.getAllCustomers(connection);
+    }*/
+    @Override
+     public List<CustomerDTO> getAllCustomers(Connection connection) throws SQLException {
+      return customerDAO.getAllCustomers(connection);
+  }
+
 }
