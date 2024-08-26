@@ -14,4 +14,8 @@ public interface ItemDAO {
     boolean deleteItem(String id, Connection connection) throws SQLException;
 
     List<ItemDTO> getAllItems(Connection connection) throws SQLException;
+
+    ItemDTO getItemById(String id, Connection connection) throws SQLException;
+
+    boolean updateItemQuantity(String id, int qty, Connection connection) throws SQLException;
 }

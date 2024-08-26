@@ -10,3 +10,18 @@ CREATE TABLE item (
     price DECIMAL(10, 2) NOT NULL,
     qty INT NOT NULL
 );
+CREATE TABLE orders (
+    orderId INT AUTO_INCREMENT PRIMARY KEY,
+    customerId INT,
+    total DECIMAL(10, 2) NOT NULL,
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customerId) REFERENCES customer(id)
+);
+
+CREATE TABLE order_items (
+    orderId INT,
+    itemId INT,
+    quantity INT NOT NULL,
+    FOREIGN KEY (orderId) REFERENCES orders(orderId),
+    FOREIGN KEY (itemId) REFERENCES item(id)
+);

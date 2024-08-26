@@ -58,5 +58,40 @@ public class ItemDAOImpl implements ItemDAO {
             return itemList;
         }
     }
+    @Override
+    public ItemDTO getItemById(String id, Connection connection) throws SQLException {
+        String query = "SELECT * FROM item WHERE id = ?";
+        try (PreparedStatement pst = connection.prepareStatement(query)) {
+            pst.setString(1, id);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    return new ItemDTO(
+                            rs.getString("id"),
+                            rs.getString("name"),
+                            rs.getString("price"),
+                            rs.getString("qty")
+                    );
+                }
+            }
+        }
+        return null; // Item not found
+    }
+
+    @Override
+    public boolean updateItemQuantity(String id, int qty, Connection connection) throws SQLException {
+        // This query deducts the specified quantity from the item's stock
+        String query = "UPDATE item SET qty = qty - ? WHERE id = ? AND qty >= ?";
+        try (PreparedStatement pst = connection.prepareStatement(query)) {
+            pst.setInt(1, qty);  // This should be a positive integer representing the quantity to subtract
+            pst.setInt(2, Integer.parseInt(id));  // The item ID
+            pst.setInt(3, qty);  // Ensures that the current stock is sufficient
+
+            return pst.executeUpdate() > 0;  // Executes the update and returns true if successful
+        }
+    }
+
+
+
+
 
 }
