@@ -15,4 +15,5 @@ The POS System API provides endpoints to manage orders, customers, and items wit
 
 
 ## API Documentation
-For detailed API documentation, visit [API Documentation](./EE-Backend/apiDocumentation.md).
+For detailed API documentation, visit [API Documentation](docs/apiDocumentation.md).
+
